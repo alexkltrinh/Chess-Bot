@@ -75,7 +75,7 @@ int main()
         if (!fin)
         {
             cout << "Unable to find file." << endl;
-            return 1;
+            return EXIT_FAILURE;
         }
 
         // Read the current content of the file
@@ -126,7 +126,7 @@ int main()
             if (!fout)
             {
                 cout << "unable to output file." << endl;
-                return 1;
+                return EXIT_FAILURE;
             }
             fout << coordinates[0][0] << " " << coordinates[0][1] << " " << coordinates[1][0] << " " << coordinates[1][1] << endl;
             fout.close(); // Close the output file
@@ -136,5 +136,5 @@ int main()
         this_thread::sleep_for(chrono::milliseconds(1000));
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
