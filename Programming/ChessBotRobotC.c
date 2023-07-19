@@ -13,7 +13,14 @@ void zeroAllMotors();
 	motor[motorA] = motor[motorB] = motor[motorC] = 100;
 
 	while(SensorValue[S1] == 0 && SensorValue[S2] == 0 && SensorValue[S3] != 2) //change "2" to appropriate value.
-	{}
+	{
+		if(SensorValue[S1] == 0)
+			motor[motorA] = 0;
+		if(SensorValue[S2] == 0)
+			motor[motorD] = 0;
+		if(SensorValue[S3] < zeroDist)
+			motor[motorC] = 0; 
+	}
 	motor[motorA] = motor[motorB] = motor[motorC] = 0;
 }
 
@@ -34,7 +41,8 @@ void moveXY(float x, float y, int coord[][]) //determine where whcih side is 0,0
 task main()
 {
 	configureAllSensors();
-	zeroAllMotors();
+	zeroAllMotors(); //Should not zero all motors until we start the robot 
+
 
 
 }
