@@ -1,3 +1,5 @@
+// const int CHESS_COORDINATE[8][8] = {0};
+
 void configureAllSensors()
 {
 	SensorType[S1] = sensorEV3_Touch;
@@ -6,9 +8,7 @@ void configureAllSensors()
 	wait1Msec(50);
 }
 
-
-
-void zeroAllMotors();
+void zeroAllMotors()
 {
 	motor[motorA] = motor[motorB] = motor[motorC] = 100;
 
@@ -26,18 +26,13 @@ void zeroAllMotors();
 
 void moveXY(float x, float y) //a1 is (0,0)
 {
-	nMotorEncoder[motorA] = 0;
-	motor[motorA] = 100;
-	while (nMotorEncoder[motorA] < x*(number)*(conversion))
+	nMotorEncoder[motorA] = nMotorEncoder[motorB] = 0;
+	motor[motorA] = motor[motorB] = 100;
+	while (nMotorEncoder[motorA] < x*(number)*(conversion)&& nMotorEncoder[motorB] < y*(number)*(conversion))
 	{}
-	motor[motorA] = 0;
-	nMotorEncoder[motorB] = 0;
-	motor[motorB] = 100;
-	while(nMotorEncoder[motorB] < y*(number)*(conversion))
-	{}
-	motor[motorB] = 0;
 }
-void removePiece();
+
+void removePiece()
 {
 	zeroAllMotors();
 	nMotorEncoder[motorA] = 0;
@@ -66,7 +61,7 @@ void pickUpPiece();
 	{}
 	motor[motorC] =0;
 }
-void dropPiece();
+void dropPiece()
 {
 	motor[motorC] = 100;
 	while(nMotorEncoder[motorC] < (value))
