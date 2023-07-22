@@ -124,9 +124,14 @@ void dropPiece()
 }
 */
 /*
-void chessMoves() //reads in the files and generates move
+string chessMoves(int & movesPlayed) //reads in the files and generates move
 {
+	bool moves = 1, retractClaw = 1; 
 
+	if (moves = 0 || retractClaw= 0)
+	{
+		return "Game Canceled";
+	}
 }
 */
 
@@ -134,10 +139,12 @@ void chessMoves() //reads in the files and generates move
 task main()
 {
 
-
+	int movesPlayed = 0; 
 	configureAllSensors();
 	zeroAllMotors();
 	moveXY(5,5);
+
+	//chessMoves(movesPlayed);
 
 
 }
