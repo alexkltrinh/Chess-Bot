@@ -10,12 +10,13 @@ const int zeroDist = 6;
 const tSensors X_ZERO = S4;
 const tSensors Y_ZERO = S2;
 const tSensors Z_ZERO = S3;
+
 void configureAllSensors()
 {
 	SensorType[Z_ZERO] = sensorEV3_Touch; //z
 	SensorType[Y_ZERO] = sensorEV3_Touch; //y
 	SensorType[X_ZERO] = sensorEV3_Ultrasonic; //x
-	wait1Msec(50);
+	wait1Msec(100);
 }
 
 void zeroAllMotors()
@@ -36,7 +37,33 @@ void zeroAllMotors()
 	nMotorEncoder[motorA] = nMotorEncoder[motorB] = nMotorEncoder[motorD] = 0;
 }
 
-void moveXY(int x, int y) //a1 is (0,0)
+
+void callibrateBoard()
+{
+	zeroAllMotors();
+	int xDist = 4000;
+	int yDist = 3150;
+	nMotorEncoder[motorD] = nMotorEncoder[motorA] = 0;
+	motor[motorD] = motor[motorA] = 100;
+
+	while (nMotorEncoder[motorD] < xDist && nMotorEncoder[motorA] <yDist)
+	{
+		if(nMotorEncoder[motorD] > xDist)
+			motor[motorD] = 0;
+		if(nMotorEncoder[motorA] > yDist)
+			motor[motorA] = 0;
+	}
+	
+	displayString(3, "Press and release Enter to confirm board calibration");
+
+	while(!getButtonPressed(BUTTON_ENTER))
+	{}
+	while(getButtonPressed(BUTTON_ENTER))
+	{}
+}
+
+
+bool moveXY(int x, int y) //a1 is (0,0), will take a bool value and return 1 normally, if 0 is returned end the game
 {
 	x = 4000 + 4000*x;
 	y = 3150 + 3150*y;
@@ -55,7 +82,7 @@ void moveXY(int x, int y) //a1 is (0,0)
 }
 
 /*
-void removePiece()
+bool removePiece() //same return as moveXY
 {
 	zeroAllMotors();
 	nMotorEncoder[motorA] = 0;
@@ -69,7 +96,7 @@ void removePiece()
 	motor[motorB] = 0;
 }
 
-void pickUpPiece();
+bool pickUpPiece(); // same return as moveXY
 {
 	nMotorEncoder[motorC] = 0;
 	motor[motorC] = 100;
@@ -94,6 +121,12 @@ void dropPiece()
 	motor[motorD] = -100;
 	wait1Msec(500);
 	motor[motorD] =0;
+}
+*/
+/*
+void chessMoves() //reads in the files and generates move
+{
+
 }
 */
 
