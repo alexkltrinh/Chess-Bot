@@ -5,6 +5,10 @@ A; y
 B: z
 C: claw
 D: x
+
+Sqaures nmotorvalues:
+x =
+y =
 */
 const int zeroDist = 6;
 const tSensors X_ZERO = S4;
@@ -21,7 +25,8 @@ void configureAllSensors()
 
 void zeroAllMotors()
 {
-	motor[motorA] = motor[motorB] = -100;
+	motor[motorA] = -100
+	motor[motorB] = -70;
 	motor[motorD] = -100;
 
 	while (!(SensorValue[Z_ZERO] == 1 && SensorValue[Y_ZERO] == 1 && SensorValue[X_ZERO] < zeroDist)) //change "2" to appropriate value.
@@ -38,9 +43,34 @@ void zeroAllMotors()
 }
 
 
+
+
+
+
+bool moveXY(int x, int y) //a1 is (0,0), will take a bool value and return 1 normally, if 0 is returned end the game
+{
+	x = 12.9 + x*3.4;
+	y = 3150 + 3150*y;
+  nMotorEncoder[motorA] = 0;
+	motor[motorD] = motor[motorA] = 100;
+
+	while (SensorValue[X_ZERO] < x && nMotorEncoder[motorA] <y)
+	{
+		if(SensorValue[X_ZERO] > x)
+			motor[motorD] = 0;
+		if(nMotorEncoder[motorA] > y)
+			motor[motorA] = 0;
+		if(getButtonPress(buttonAny) == 1)
+			return false;
+	}
+	motor[motorB] = motor[motorA] = 0;
+	return true;
+}
+
 void callibrateBoard()
 {
 	zeroAllMotors();
+	/*
 	int xDist = 4000;
 	int yDist = 3150;
 	nMotorEncoder[motorD] = nMotorEncoder[motorA] = 0;
@@ -53,80 +83,77 @@ void callibrateBoard()
 		if(nMotorEncoder[motorA] > yDist)
 			motor[motorA] = 0;
 	}
-	
+	*/
+	moveXY(0,0);
+
 	displayString(3, "Press and release Enter to confirm board calibration");
 
-	while(!getButtonPressed(BUTTON_ENTER))
+	while(!getButtonPress(buttonEnter))
 	{}
-	while(getButtonPressed(BUTTON_ENTER))
+	while(getButtonPress(buttonEnter))
 	{}
-}
-
-
-bool moveXY(int x, int y) //a1 is (0,0), will take a bool value and return 1 normally, if 0 is returned end the game
-{
-	x = 4000 + 4000*x;
-	y = 3150 + 3150*y;
-	nMotorEncoder[motorD] = nMotorEncoder[motorA] = 0;
-	motor[motorD] = motor[motorA] = 100;
-
-	while (nMotorEncoder[motorD] < x && nMotorEncoder[motorA] <y)
-	{
-		if(nMotorEncoder[motorD] > x)
-			motor[motorD] = 0;
-		if(nMotorEncoder[motorA] > y)
-			motor[motorA] = 0;
-	}
-
-	motor[motorB] = motor[motorA] = 0;
+	zeroAllMotors();
 }
 
 /*
-bool removePiece() //same return as moveXY
+bool removePiece(float counter) //same return as moveXY
 {
-	zeroAllMotors();
-	nMotorEncoder[motorA] = 0;
-	while (nMotorEncoder[motorA] < x*2)
-	{}
-	motor[motorA] = 0;
-	nMotorEncoder[motorB] = 0;
+	int x = counter*(value);
+	motor[motorD] = 100;
 	motor[motorB] = 100;
-	while(nMotorEncoder[motorB] < y*2)
-	{}
-	motor[motorB] = 0;
-}
 
-bool pickUpPiece(); // same return as moveXY
+	while (SensorValue[X_ZERO] < x && SensorValue[Y_ZERO] == 0)
+	{
+		if(SensorValue[X_ZERO] > x)
+			motor[motorD] = 0;
+		if(SensorValue[Y_ZERO] == 1)
+			motor[motorB] = 0;
+		if(getButtonPress(buttonAny) == 1)
+			return false;
+	}
+	return true;
+	counter++;
+}
+*/
+bool pickUpPiece() // same return as moveXY Calum
 {
+	nMotorEncoder[motorB] = 0;
+	motor[motorB] = 50;
+	while(nMotorEncoder[motorB] < 1000)
+	{}
+	motor[motorB]=0;
 	nMotorEncoder[motorC] = 0;
-	motor[motorC] = 100;
-	while(nMotorEncoder[motorC] < 2)//value
+	wait1Msec(2000);
+	motor[motorC] = 20;
+	while(nMotorEncoder[motorC] < 100)
 	{}
 	motor[motorC] = 0;
-	motor[motorD] = 100;
-	wait1Msec(500);
-	motor[motorD] =0;
-	motor[motorC] = -100;
-	while(nMotorEncoder[motorC] > 2)//vslu
+	wait1Msec(2000);
+	motor[motorB] = -50;
+	while(!(nMotorEncoder[motorB] == 0))
 	{}
-	motor[motorC] =0;
+	motor[motorB] =0;
+	return true;
 }
 
 void dropPiece()
 {
-	motor[motorC] = 100;
-	while(nMotorEncoder[motorC] < 2)//vslur
+	motor[motorB] = 50;
+	while(nMotorEncoder[motorB] < 1000 )//vslur
+	{}
+	motor[motorB]=0;
+	wait1Msec(2000);
+	motor[motorC] = -20;
+	while(nMotorEncoder[motorC] <30)
 	{}
 	motor[motorC] = 0;
-	motor[motorD] = -100;
-	wait1Msec(500);
-	motor[motorD] =0;
+
 }
-*/
+
 /*
 string chessMoves(int & movesPlayed) //reads in the files and generates move
 {
-	bool moves = 1, retractClaw = 1; 
+	bool moves = 1, retractClaw = 1;
 
 	if (moves = 0 || retractClaw= 0)
 	{
@@ -139,10 +166,15 @@ string chessMoves(int & movesPlayed) //reads in the files and generates move
 task main()
 {
 
-	int movesPlayed = 0; 
+	int movesPlayed = 0;
 	configureAllSensors();
 	zeroAllMotors();
-	moveXY(5,5);
+	int test = pickUpPiece();
+	dropPiece();
+
+
+	//callibrateBoard();
+	//moveXY(5,5);
 
 	//chessMoves(movesPlayed);
 
