@@ -50,7 +50,7 @@ void zeroAllMotors()
 bool moveXY(int x, int y) //a1 is (0,0), will take a bool value and return 1 normally, if 0 is returned end the game
 {
 	x = 12.9 + x*3.4;
-	y = 3150 + 3150*y;
+	y = (3150 + 3150*y)*180/PI;
   nMotorEncoder[motorA] = 0;
 	motor[motorD] = motor[motorA] = 100;
 
@@ -169,6 +169,7 @@ task main()
 	int movesPlayed = 0;
 	configureAllSensors();
 	zeroAllMotors();
+	int moveTest =moveXY(2,2);
 	int test = pickUpPiece();
 	dropPiece();
 
