@@ -120,18 +120,27 @@ bool pickUpPiece() // same return as moveXY Calum
 	nMotorEncoder[motorB] = 0;
 	motor[motorB] = 50;
 	while(nMotorEncoder[motorB] < 1000)
-	{}
+	{
+		if(getButtonPress(buttonAny) == 1)
+			return false;
+	}
 	motor[motorB]=0;
 	nMotorEncoder[motorC] = 0;
 	wait1Msec(2000);
 	motor[motorC] = 20;
 	while(nMotorEncoder[motorC] < 100)
-	{}
+	{
+		if(getButtonPress(buttonAny) == 1)
+			return false;
+	}
 	motor[motorC] = 0;
 	wait1Msec(2000);
 	motor[motorB] = -50;
 	while(!(nMotorEncoder[motorB] == 0))
-	{}
+	{
+		if(getButtonPress(buttonAny) == 1)
+			return false;
+	}
 	motor[motorB] =0;
 	return true;
 }
@@ -139,7 +148,7 @@ bool pickUpPiece() // same return as moveXY Calum
 void dropPiece()
 {
 	motor[motorB] = 50;
-	while(nMotorEncoder[motorB] < 1000 )//vslur
+	while(nMotorEncoder[motorB] < 1000 )
 	{}
 	motor[motorB]=0;
 	wait1Msec(2000);
