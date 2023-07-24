@@ -1,4 +1,7 @@
-// const int CHESS_COORDINATE[8][8] = {0};
+const int X_COORD[] ={37000,32000,27200,23100,18200,13580,9200,5050};
+const int Y_COORD[] = {14380,12350,10450,8550,6150,4250,1960,85};
+
+
 /*
 Motors:
 A; y
@@ -34,7 +37,7 @@ void zeroAllMotors()
 		if(SensorValue[Z_ZERO] == 1)
 			motor[motorB] = 0;
 		if(SensorValue[Y_ZERO] == 1)
-			motor[motorA] = 0;
+			motor[motorA] = -0.5;
 		if(SensorValue[X_ZERO] < zeroDist)
 			motor[motorD] = 0;
 	}
@@ -49,33 +52,32 @@ void zeroAllMotors()
 
 bool moveXY(int x, int y) //a1 is (0,0), will take a bool value and return 1 normally, if 0 is returned end the game
 {
-	x = 12.9 + x*3.4;
-	y = (3150 + 3150*y)*180/PI;
   nMotorEncoder[motorA] = 0;
+	nMotorEncoder[motorD] = 0;
 	motor[motorD] = motor[motorA] = 100;
 
-	while (SensorValue[X_ZERO] < x && nMotorEncoder[motorA] <y)
+	while (nMotorEncoder[motorD] < X_COORD[x] || nMotorEncoder[motorA] < Y_COORD[y])
 	{
-		if(SensorValue[X_ZERO] > x)
+		if(nMotorEncoder[motorD] > X_COORD[x])
 			motor[motorD] = 0;
-		if(nMotorEncoder[motorA] > y)
+		if(nMotorEncoder[motorA] > Y_COORD[y])
 			motor[motorA] = 0;
 		if(getButtonPress(buttonAny) == 1)
 			return false;
 	}
-	motor[motorB] = motor[motorA] = 0;
+	motor[motorD] = motor[motorA] = 0;
 	return true;
 }
-/*
+
 void callibrateBoard()
 {
 	zeroAllMotors();
-	int xDist = 4000;
-	int yDist = 3150;
+	int xDist = 5050;
+	int yDist = 85;
 	nMotorEncoder[motorD] = nMotorEncoder[motorA] = 0;
 	motor[motorD] = motor[motorA] = 100;
 
-	while (nMotorEncoder[motorD] < xDist && nMotorEncoder[motorA] <yDist)
+	while (nMotorEncoder[motorD] < xDist || nMotorEncoder[motorA] <yDist)
 	{
 		if(nMotorEncoder[motorD] > xDist)
 			motor[motorD] = 0;
@@ -93,7 +95,7 @@ void callibrateBoard()
 	{}
 	zeroAllMotors();
 }
-*/
+
 /*
 bool removePiece(float counter) //same return as moveXY
 {
@@ -117,8 +119,8 @@ bool removePiece(float counter) //same return as moveXY
 bool pickUpPiece() // same return as moveXY Calum
 {
 	nMotorEncoder[motorB] = 0;
-	motor[motorB] = 50;
-	while(nMotorEncoder[motorB] < 1000)
+	motor[motorB] = 30;
+	while(nMotorEncoder[motorB] < 1050)
 	{
 		if(getButtonPress(buttonAny) == 1)
 			return false;
@@ -127,14 +129,14 @@ bool pickUpPiece() // same return as moveXY Calum
 	nMotorEncoder[motorC] = 0;
 	wait1Msec(2000);
 	motor[motorC] = 20;
-	while(nMotorEncoder[motorC] < 100)
+	while(nMotorEncoder[motorC] < 120)
 	{
 		if(getButtonPress(buttonAny) == 1)
 			return false;
 	}
 	motor[motorC] = 0;
 	wait1Msec(2000);
-	motor[motorB] = -50;
+	motor[motorB] = -40;
 	while(!(nMotorEncoder[motorB] == 0))
 	{
 		if(getButtonPress(buttonAny) == 1)
@@ -152,7 +154,7 @@ void dropPiece()
 	motor[motorB]=0;
 	wait1Msec(2000);
 	motor[motorC] = -20;
-	while(nMotorEncoder[motorC] <30)
+	while(nMotorEncoder[motorC] <80)
 	{}
 	motor[motorC] = 0;
 
@@ -176,10 +178,12 @@ task main()
 
 	int movesPlayed = 0;
 	configureAllSensors();
-	zeroAllMotors();
-	int moveTest =moveXY(2,2);
+	//zeroAllMotors();
+	//int moveTest =moveXY(7,7);
 	int test = pickUpPiece();
 	dropPiece();
+
+
 
 
 	//callibrateBoard();
