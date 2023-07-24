@@ -25,7 +25,7 @@ void configureAllSensors()
 
 void zeroAllMotors()
 {
-	motor[motorA] = -100
+	motor[motorA] = -100;
 	motor[motorB] = -70;
 	motor[motorD] = -100;
 
@@ -66,11 +66,10 @@ bool moveXY(int x, int y) //a1 is (0,0), will take a bool value and return 1 nor
 	motor[motorB] = motor[motorA] = 0;
 	return true;
 }
-
+/*
 void callibrateBoard()
 {
 	zeroAllMotors();
-	/*
 	int xDist = 4000;
 	int yDist = 3150;
 	nMotorEncoder[motorD] = nMotorEncoder[motorA] = 0;
@@ -83,7 +82,7 @@ void callibrateBoard()
 		if(nMotorEncoder[motorA] > yDist)
 			motor[motorA] = 0;
 	}
-	*/
+
 	moveXY(0,0);
 
 	displayString(3, "Press and release Enter to confirm board calibration");
@@ -94,7 +93,7 @@ void callibrateBoard()
 	{}
 	zeroAllMotors();
 }
-
+*/
 /*
 bool removePiece(float counter) //same return as moveXY
 {
