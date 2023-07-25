@@ -9,7 +9,7 @@ D: x
 
 */
 const int X_COORD[] ={4950,9200,13581,18200,23100,27200,32000,37000};
-const int Y_COORD[] = {14230,12350,10450,8550,6150,4250,1960,85}; //subject to change due to y-zeroing
+const int Y_COORD[] = {14230,12350,10450,8550,6150,4250,1960,80}; //subject to change due to y-zeroing
 const int zeroDist = 6;
 const tSensors X_ZERO = S4;
 const tSensors Y_ZERO = S2;
@@ -97,10 +97,12 @@ bool removePiece(int &counter) //same return as moveXY
 	int y =400+ counter*(400);
 	zeroAllMotors();
 	nMotorEncoder[motorD] = 0;
-	motor[motorA] = 100;
+	motor[motorA] = motor[motorD]= 100;
 
-	while (nMotorEncoder[motorA] < y)
+	while (nMotorEncoder[motorA] < y || SensorValue[X_ZERO] < 5.5)
 	{
+		if(SensorValue[X_ZERO] > 5.5)
+			motor[motorD] = 0;
 		if(nMotorEncoder[motorA] > y)
 			motor[motorA] = 0;
 		if(getButtonPress(buttonAny) == 1)
@@ -155,7 +157,7 @@ void dropPiece()
 
 }
 
-
+/*
 int chessMoves(TFileHandle & fin, TFileHandle & fout) //reads in the files and generates move
 {
 	/*int moves = 1, retractClaw = 1;
@@ -164,12 +166,12 @@ int chessMoves(TFileHandle & fin, TFileHandle & fout) //reads in the files and g
 		return 0;
 	}
 	return 1;
-	*/
+
 	int numValue = 0;
 	readIntPC(fin,numValue);
 
 	}
-
+*/
 
 
 task main()
@@ -197,7 +199,7 @@ task main()
 	zeroAllMotors();
 	//callibrateBoard();
 
-	int te = moveXY(0,7);
+	int te = moveXY(2,5);
 	int test = pickUpPiece();
 
 	int rem = removePiece(counter);
@@ -208,7 +210,7 @@ task main()
 
 
 	//callibrateBoard();
-
+/*
 	TFileHandle fin;
 	bool fileCheck = openReadPC(fin , "chess.txt");
 	TFileHandle fout;
@@ -237,5 +239,5 @@ task main()
 
 	//chessMoves(movesPlayed);
 
-
+*/
 }
