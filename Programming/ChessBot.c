@@ -1,4 +1,4 @@
-#include "PC_FileIO.c"
+//#include "PC_FileIO.c"
 
 /*
 Motors:
@@ -70,20 +70,18 @@ bool moveXY(int x, int y) //a1 is (0,0), will take a bool value and return 1 nor
 void callibrateBoard()
 {
 	zeroAllMotors();
-	int xDist = 5050;
-	int yDist = 14380;
 	nMotorEncoder[motorD] = nMotorEncoder[motorA] = 0;
 	motor[motorD] = motor[motorA] = 100;
 
-	while (nMotorEncoder[motorD] < xDist || nMotorEncoder[motorA] <yDist)
+	while (nMotorEncoder[motorD] < X_COORD[0] || nMotorEncoder[motorA] < Y_COORD[0])
 	{
-		if(nMotorEncoder[motorD] > xDist)
+		if(nMotorEncoder[motorD] > X_COORD[0])
 			motor[motorD] = 0;
-		if(nMotorEncoder[motorA] > yDist)
+		if(nMotorEncoder[motorA] > Y_COORD[0])
 			motor[motorA] = 0;
 	}
 
-	moveXY(0,0);
+	//moveXY(0,0);
 
 	displayString(3, "Press and release Enter to confirm board calibration");
 
@@ -97,21 +95,22 @@ void callibrateBoard()
 
 bool removePiece(int &counter) //same return as moveXY
 {
-	int x =400+ counter*(400);
-	moveXY(4,0);
-	motor[motorD] = -100;
-	motor[motorB] = -100;
+	int y =400+ counter*(400);
+	zeroAllMotors();
 	nMotorEncoder[motorD] = 0;
+	motor[motorA] = 100;
+	motor[motorD]= -30;
 
-	while (nMotorEncoder[motorD] < x || SensorValue[Y_ZERO] == 0)
+	while (nMotorEncoder[motorA] < y || SensorValue[X_ZERO] < 5)
 	{
-		if(SensorValue[X_ZERO] > x)
+		if(SensorValue[X_ZERO] > 5)
 			motor[motorD] = 0;
-		if(SensorValue[Y_ZERO] == 1)
-			motor[motorB] = 0;
+		if(nMotorEncoder[motorA] > y)
+			motor[motorA] = 0;
 		if(getButtonPress(buttonAny) == 1)
 			return false;
 	}
+	motor[motorA] = 0;
 	return true;
 	counter++;
 }
@@ -221,6 +220,24 @@ task main()
 		clearTimer(T1);
 	}
 
+
+//	TFileHandle fin;
+//	bool fileCheck = openReadPC(fin , "chess.txt");
+
+	//int moveTest =moveXY(7,7);
+	zeroAllMotors();
+	//callibrateBoard();
+
+	int te = moveXY(1,3);
+	int test = pickUpPiece();
+
+	int rem = removePiece(counter);
+	dropPiece();
+
+
+
+	//callibrateBoard();
+
 	TFileHandle fin;
 	bool fileCheck = openReadPC(fin , "chess.txt");
 
@@ -232,5 +249,4 @@ task main()
 	{
 		movesPlayed = chessMoves(fin);
 	}
-
 }
