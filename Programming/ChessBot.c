@@ -1,6 +1,3 @@
-const int X_COORD[] ={37000,32000,27200,23100,18200,13580,9200,5050};
-const int Y_COORD[] = {14380,12350,10450,8550,6150,4250,1960,85}; //subject to change due to y-zeroing
-
 
 /*
 Motors:
@@ -9,10 +6,9 @@ B: z
 C: claw
 D: x
 
-Sqaures nmotorvalues:
-x =
-y =
 */
+const int X_COORD[] ={37000,32000,27200,23100,18200,13580,9200,5050};
+const int Y_COORD[] = {14380,12350,10450,8550,6150,4250,1960,85}; //subject to change due to y-zeroing
 const int zeroDist = 6;
 const tSensors X_ZERO = S4;
 const tSensors Y_ZERO = S2;
@@ -181,7 +177,15 @@ task main()
 	int movesPlayed = 0;
 	int counter =0;
 	configureAllSensors();
-	//zeroAllMotors();
+	
+	displayString(5,"Press Any Button To Start!");
+	while(!getButtonPress(buttonAny))
+	{}
+	while(getButtonPress(buttonAny))
+	{
+		ClearTimer(T1);
+	}
+	
 	//int moveTest =moveXY(7,7);
 	int test = pickUpPiece();
 	int remove = removePiece(counter);
