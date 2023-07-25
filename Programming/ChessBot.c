@@ -69,7 +69,7 @@ void callibrateBoard()
 {
 	zeroAllMotors();
 	int xDist = 5050;
-	int yDist = 85;
+	int yDist = 14380;
 	nMotorEncoder[motorD] = nMotorEncoder[motorA] = 0;
 	motor[motorD] = motor[motorA] = 100;
 
