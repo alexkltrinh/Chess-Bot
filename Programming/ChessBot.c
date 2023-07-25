@@ -8,8 +8,8 @@ C: claw
 D: x
 
 */
-const int X_COORD[] ={37000,32000,27200,23100,18200,13580,9200,5050};
-const int Y_COORD[] = {14380,12350,10450,8550,6150,4250,1960,85}; //subject to change due to y-zeroing
+const int X_COORD[] ={5050,9200,13581,18200,23100,27200,32000,37000};
+const int Y_COORD[] = {14280,12350,10450,8550,6150,4250,1960,85}; //subject to change due to y-zeroing
 const int zeroDist = 6;
 const tSensors X_ZERO = S4;
 const tSensors Y_ZERO = S2;
@@ -98,8 +98,8 @@ bool removePiece(int &counter) //same return as moveXY
 {
 	int x =400+ counter*(400);
 	moveXY(4,0);
-	motor[motorD] = 100;
-	motor[motorB] = 100;
+	motor[motorD] = -100;
+	motor[motorB] = -100;
 	nMotorEncoder[motorD] = 0;
 
 	while (nMotorEncoder[motorD] < x || SensorValue[Y_ZERO] == 0)
@@ -184,14 +184,20 @@ task main()
 	{}
 	while(getButtonPress(buttonAny))
 	{
-		ClearTimer(T1);
+		clearTimer(T1);
 	}
+<<<<<<< HEAD
 	TFileHandle fin;
 	bool fileCheck = openReadPC(fin , "chess.txt");
+=======
+>>>>>>> 8027879e7659723e964c945c41774c189fcb7b26
 
 	//int moveTest =moveXY(7,7);
+	zeroAllMotors();
+	int te = moveXY(0,0);
 	int test = pickUpPiece();
-	int remove = removePiece(counter);
+
+	int rem = removePiece(counter);
 	dropPiece();
 
 
