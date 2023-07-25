@@ -159,17 +159,21 @@ void dropPiece()
 
 }
 
-/*
-string chessMoves(int & movesPlayed) //reads in the files and generates move
-{
-	bool moves = 1, retractClaw = 1;
 
-	if (moves = 0 || retractClaw= 0)
+int chessMoves(TFileHandle & fin, TFileHandle & fout) //reads in the files and generates move
+{
+	/*int moves = 1, retractClaw = 1;
+	if (moves == 0 || retractClaw == 0)
 	{
-		return "Game Canceled";
+		return 0;
 	}
-}
-*/
+	return 1;
+	*/
+	int numValue = 0;
+	readIntPC(fin,numValue);
+
+	}
+
 
 
 task main()
@@ -186,24 +190,22 @@ task main()
 	{
 		clearTimer(T1);
 	}
-<<<<<<< HEAD
+
 	TFileHandle fin;
 	bool fileCheck = openReadPC(fin , "chess.txt");
-=======
->>>>>>> 8027879e7659723e964c945c41774c189fcb7b26
-
-	//int moveTest =moveXY(7,7);
-	zeroAllMotors();
-	int te = moveXY(0,0);
-	int test = pickUpPiece();
-
-	int rem = removePiece(counter);
-	dropPiece();
+	TFileHandle fout;
+	bool fileOut = openWritePC(fout, "chess_output.txt");
 
 
-
-
-	//callibrateBoard();
+	if(!fileCheck)
+	{
+		displayString(10, "Error");
+	}
+	else
+	{
+		chessMoves(fin, fout);
+	}
+;
 	//moveXY(5,5);
 
 	//chessMoves(movesPlayed);
