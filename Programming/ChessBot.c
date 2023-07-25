@@ -186,8 +186,8 @@ task main()
 	{
 		clearTimer(T1);
 	}
-<<<<<<< HEAD
-//<<<<<<< HEAD
+
+
 //	TFileHandle fin;
 //	bool fileCheck = openReadPC(fin , "chess.txt");
 //=======
@@ -208,7 +208,14 @@ task main()
 
 
 	//callibrateBoard();
-=======
+
+	TFileHandle fin;
+	bool fileCheck = openReadPC(fin , "chess.txt");
+	TFileHandle fout;
+	bool fileOut = openWritePC(fout, "chess_output.txt");
+
+
+
 
 	TFileHandle fin;
 	bool fileCheck = openReadPC(fin , "chess.txt");
@@ -225,7 +232,7 @@ task main()
 		chessMoves(fin, fout);
 	}
 ;
->>>>>>> 7713860cb11c56c38f8641965270dddd6692f3d8
+
 	//moveXY(5,5);
 
 	//chessMoves(movesPlayed);
