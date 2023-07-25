@@ -97,11 +97,12 @@ bool removePiece(int &counter) //same return as moveXY
 	int y =400+ counter*(400);
 	zeroAllMotors();
 	nMotorEncoder[motorD] = 0;
-	motor[motorA] = motor[motorD]= 100;
+	motor[motorA] = 100;
+	motor[motorD]= -30;
 
-	while (nMotorEncoder[motorA] < y || SensorValue[X_ZERO] < 5.5)
+	while (nMotorEncoder[motorA] < y || SensorValue[X_ZERO] < 5)
 	{
-		if(SensorValue[X_ZERO] > 5.5)
+		if(SensorValue[X_ZERO] > 5)
 			motor[motorD] = 0;
 		if(nMotorEncoder[motorA] > y)
 			motor[motorA] = 0;
@@ -199,7 +200,7 @@ task main()
 	zeroAllMotors();
 	//callibrateBoard();
 
-	int te = moveXY(2,5);
+	int te = moveXY(1,3);
 	int test = pickUpPiece();
 
 	int rem = removePiece(counter);
