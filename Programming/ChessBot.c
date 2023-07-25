@@ -1,5 +1,5 @@
 const int X_COORD[] ={37000,32000,27200,23100,18200,13580,9200,5050};
-const int Y_COORD[] = {14380,12350,10450,8550,6150,4250,1960,85};
+const int Y_COORD[] = {14380,12350,10450,8550,6150,4250,1960,85}; //subject to change due to y-zeroing
 
 
 /*
@@ -52,7 +52,7 @@ void zeroAllMotors()
 
 bool moveXY(int x, int y) //a1 is (0,0), will take a bool value and return 1 normally, if 0 is returned end the game
 {
-  nMotorEncoder[motorA] = 0;
+    nMotorEncoder[motorA] = 0;
 	nMotorEncoder[motorD] = 0;
 	motor[motorD] = motor[motorA] = 100;
 
@@ -96,14 +96,16 @@ void callibrateBoard()
 	zeroAllMotors();
 }
 
-/*
-bool removePiece(float counter) //same return as moveXY
+
+bool removePiece(int &counter) //same return as moveXY
 {
-	int x = counter*(value);
+	int x =400+ counter*(400);
+	moveXY(4,0);
 	motor[motorD] = 100;
 	motor[motorB] = 100;
+	nMotorEncoder[motorD] = 0;
 
-	while (SensorValue[X_ZERO] < x && SensorValue[Y_ZERO] == 0)
+	while (nMotorEncoder[motorD] < x || SensorValue[Y_ZERO] == 0)
 	{
 		if(SensorValue[X_ZERO] > x)
 			motor[motorD] = 0;
@@ -115,7 +117,7 @@ bool removePiece(float counter) //same return as moveXY
 	return true;
 	counter++;
 }
-*/
+
 bool pickUpPiece() // same return as moveXY Calum
 {
 	nMotorEncoder[motorB] = 0;
@@ -177,10 +179,12 @@ task main()
 {
 
 	int movesPlayed = 0;
+	int counter =0;
 	configureAllSensors();
 	//zeroAllMotors();
 	//int moveTest =moveXY(7,7);
 	int test = pickUpPiece();
+	int remove = removePiece(counter);
 	dropPiece();
 
 
