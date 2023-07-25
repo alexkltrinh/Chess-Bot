@@ -220,24 +220,6 @@ task main()
 		clearTimer(T1);
 	}
 
-
-//	TFileHandle fin;
-//	bool fileCheck = openReadPC(fin , "chess.txt");
-
-	//int moveTest =moveXY(7,7);
-	zeroAllMotors();
-	//callibrateBoard();
-
-	int te = moveXY(1,3);
-	int test = pickUpPiece();
-
-	int rem = removePiece(counter);
-	dropPiece();
-
-
-
-	//callibrateBoard();
-
 	TFileHandle fin;
 	bool fileCheck = openReadPC(fin , "chess.txt");
 
