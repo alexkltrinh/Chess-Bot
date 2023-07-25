@@ -1,3 +1,4 @@
+#include "PC_FileIO.c"
 
 /*
 Motors:
@@ -177,7 +178,7 @@ task main()
 	int movesPlayed = 0;
 	int counter =0;
 	configureAllSensors();
-	
+
 	displayString(5,"Press Any Button To Start!");
 	while(!getButtonPress(buttonAny))
 	{}
@@ -185,7 +186,9 @@ task main()
 	{
 		ClearTimer(T1);
 	}
-	
+	TFileHandle fin;
+	bool fileCheck = openReadPC(fin , "chess.txt");
+
 	//int moveTest =moveXY(7,7);
 	int test = pickUpPiece();
 	int remove = removePiece(counter);
