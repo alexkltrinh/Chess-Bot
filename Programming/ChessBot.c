@@ -1,4 +1,4 @@
-#include "PC_FileIO.c"
+//#include "PC_FileIO.c"
 
 /*
 Motors:
@@ -8,8 +8,8 @@ C: claw
 D: x
 
 */
-const int X_COORD[] ={5050,9200,13581,18200,23100,27200,32000,37000};
-const int Y_COORD[] = {14280,12350,10450,8550,6150,4250,1960,85}; //subject to change due to y-zeroing
+const int X_COORD[] ={4950,9200,13581,18200,23100,27200,32000,37000};
+const int Y_COORD[] = {14230,12350,10450,8550,6150,4250,1960,85}; //subject to change due to y-zeroing
 const int zeroDist = 6;
 const tSensors X_ZERO = S4;
 const tSensors Y_ZERO = S2;
@@ -69,20 +69,18 @@ bool moveXY(int x, int y) //a1 is (0,0), will take a bool value and return 1 nor
 void callibrateBoard()
 {
 	zeroAllMotors();
-	int xDist = 5050;
-	int yDist = 14380;
 	nMotorEncoder[motorD] = nMotorEncoder[motorA] = 0;
 	motor[motorD] = motor[motorA] = 100;
 
-	while (nMotorEncoder[motorD] < xDist || nMotorEncoder[motorA] <yDist)
+	while (nMotorEncoder[motorD] < X_COORD[0] || nMotorEncoder[motorA] < Y_COORD[0])
 	{
-		if(nMotorEncoder[motorD] > xDist)
+		if(nMotorEncoder[motorD] > X_COORD[0])
 			motor[motorD] = 0;
-		if(nMotorEncoder[motorA] > yDist)
+		if(nMotorEncoder[motorA] > Y_COORD[0])
 			motor[motorA] = 0;
 	}
 
-	moveXY(0,0);
+	//moveXY(0,0);
 
 	displayString(3, "Press and release Enter to confirm board calibration");
 
@@ -96,21 +94,19 @@ void callibrateBoard()
 
 bool removePiece(int &counter) //same return as moveXY
 {
-	int x =400+ counter*(400);
-	moveXY(4,0);
-	motor[motorD] = -100;
-	motor[motorB] = -100;
+	int y =400+ counter*(400);
+	zeroAllMotors();
 	nMotorEncoder[motorD] = 0;
+	motor[motorA] = 100;
 
-	while (nMotorEncoder[motorD] < x || SensorValue[Y_ZERO] == 0)
+	while (nMotorEncoder[motorA] < y)
 	{
-		if(SensorValue[X_ZERO] > x)
-			motor[motorD] = 0;
-		if(SensorValue[Y_ZERO] == 1)
-			motor[motorB] = 0;
+		if(nMotorEncoder[motorA] > y)
+			motor[motorA] = 0;
 		if(getButtonPress(buttonAny) == 1)
 			return false;
 	}
+	motor[motorA] = 0;
 	return true;
 	counter++;
 }
@@ -159,17 +155,21 @@ void dropPiece()
 
 }
 
-/*
-string chessMoves(int & movesPlayed) //reads in the files and generates move
-{
-	bool moves = 1, retractClaw = 1;
 
-	if (moves = 0 || retractClaw= 0)
+int chessMoves(TFileHandle & fin, TFileHandle & fout) //reads in the files and generates move
+{
+	/*int moves = 1, retractClaw = 1;
+	if (moves == 0 || retractClaw == 0)
 	{
-		return "Game Canceled";
+		return 0;
 	}
-}
-*/
+	return 1;
+	*/
+	int numValue = 0;
+	readIntPC(fin,numValue);
+
+	}
+
 
 
 task main()
@@ -187,14 +187,17 @@ task main()
 		clearTimer(T1);
 	}
 <<<<<<< HEAD
-	TFileHandle fin;
-	bool fileCheck = openReadPC(fin , "chess.txt");
-=======
->>>>>>> 8027879e7659723e964c945c41774c189fcb7b26
+//<<<<<<< HEAD
+//	TFileHandle fin;
+//	bool fileCheck = openReadPC(fin , "chess.txt");
+//=======
+//>>>>>>> 8027879e7659723e964c945c41774c189fcb7b26
 
 	//int moveTest =moveXY(7,7);
 	zeroAllMotors();
-	int te = moveXY(0,0);
+	//callibrateBoard();
+
+	int te = moveXY(0,7);
 	int test = pickUpPiece();
 
 	int rem = removePiece(counter);
@@ -203,7 +206,26 @@ task main()
 
 
 
+
 	//callibrateBoard();
+=======
+
+	TFileHandle fin;
+	bool fileCheck = openReadPC(fin , "chess.txt");
+	TFileHandle fout;
+	bool fileOut = openWritePC(fout, "chess_output.txt");
+
+
+	if(!fileCheck)
+	{
+		displayString(10, "Error");
+	}
+	else
+	{
+		chessMoves(fin, fout);
+	}
+;
+>>>>>>> 7713860cb11c56c38f8641965270dddd6692f3d8
 	//moveXY(5,5);
 
 	//chessMoves(movesPlayed);
