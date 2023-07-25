@@ -8,8 +8,9 @@ C: claw
 D: x
 
 */
-const int X_COORD[] ={5050,9200,13581,18200,23100,27200,32000,37000};
-const int Y_COORD[] = {14280,12350,10450,8550,6150,4250,1960,85}; //subject to change due to y-zeroing
+const int X_COORD[] ={4400,8300,13575,18150,22950,27200,32000,37000};
+const int Y_COORD[] = {14230,12350,10430,8500,6150,4250,1960,80}; //subject to change due to y-zeroing
+
 const int zeroDist = 6;
 const tSensors X_ZERO = S4;
 const tSensors Y_ZERO = S2;
@@ -119,7 +120,7 @@ bool pickUpPiece() // same return as moveXY Calum
 {
 	nMotorEncoder[motorB] = 0;
 	motor[motorB] = 30;
-	while(nMotorEncoder[motorB] < 1050)
+	while(nMotorEncoder[motorB] < 1080)
 	{
 		if(getButtonPress(buttonAny) == 1)
 			return false;
@@ -128,7 +129,7 @@ bool pickUpPiece() // same return as moveXY Calum
 	nMotorEncoder[motorC] = 0;
 	wait1Msec(2000);
 	motor[motorC] = 20;
-	while(nMotorEncoder[motorC] < 120)
+	while(nMotorEncoder[motorC] < 110)
 	{
 		if(getButtonPress(buttonAny) == 1)
 			return false;
@@ -160,19 +161,49 @@ void dropPiece()
 }
 
 
-int chessMoves(TFileHandle & fin, TFileHandle & fout) //reads in the files and generates move
+int chessMoves(TFileHandle & fin)//reads in the files and generates move
 {
-	/*int moves = 1, retractClaw = 1;
-	if (moves == 0 || retractClaw == 0)
-	{
-		return 0;
-	}
-	return 1;
-	*/
-	int numValue = 0;
-	readIntPC(fin,numValue);
+	int numMoves = 0, statPiece = 10, x = 0, y = 0, x2 = 0, y2 = 0;
+	int counter = 0;
+	string startColor, piece;
 
+	readTextPC(fin, startColor);
+
+	while(readTextPC(fin, piece))
+	{
+		readIntPC(fin, statPiece);
+		displayString(9, "Status: %d", statPiece);
+		numMoves+=1;
+		readIntPC(fin, y);
+		readIntPC(fin, x);
+		readIntPC(fin, y2);
+		readIntPC(fin , x2);
+
+		displayString(10, "Move %s from %d,%d", piece ,x,y);
+		displayString(11,"to %d, %d",x2,y2);
+		zeroAllMotors();
+
+		if(statPiece == 0)
+		{
+			moveXY(x,y);
+			pickUpPiece();
+			zeroAllMotors();
+			moveXY(x2,y2);
+			dropPiece();
+		}
+		else
+		{
+			moveXY(x2,y2);
+			pickUpPiece();
+			removePiece(counter);
+			zeroAllMotors();
+			moveXY(x,y);
+			zeroAllMotors();
+			moveXY(x2,y2);
+		}
 	}
+	return numMoves;
+}
 
 
 
@@ -180,7 +211,6 @@ task main()
 {
 
 	int movesPlayed = 0;
-	int counter =0;
 	configureAllSensors();
 
 	displayString(5,"Press Any Button To Start!");
@@ -193,9 +223,6 @@ task main()
 
 	TFileHandle fin;
 	bool fileCheck = openReadPC(fin , "chess.txt");
-	TFileHandle fout;
-	bool fileOut = openWritePC(fout, "chess_output.txt");
-
 
 	if(!fileCheck)
 	{
@@ -203,12 +230,7 @@ task main()
 	}
 	else
 	{
-		chessMoves(fin, fout);
+		movesPlayed = chessMoves(fin);
 	}
-;
-	//moveXY(5,5);
-
-	//chessMoves(movesPlayed);
-
 
 }
