@@ -1,4 +1,4 @@
-//#include "PC_FileIO.c"
+#include "PC_FileIO.c"
 
 /*
 Motors:
@@ -71,17 +71,15 @@ void callibrateBoard()
 {
 	zeroAllMotors();
 	nMotorEncoder[motorD] = nMotorEncoder[motorA] = 0;
-	motor[motorD] = motor[motorA] = 100;
 
-	while (nMotorEncoder[motorD] < X_COORD[0] || nMotorEncoder[motorA] < Y_COORD[0])
-	{
-		if(nMotorEncoder[motorD] > X_COORD[0])
-			motor[motorD] = 0;
-		if(nMotorEncoder[motorA] > Y_COORD[0])
-			motor[motorA] = 0;
-	}
+	moveXY(0,7);
 
-	//moveXY(0,0);
+	nMotorEncoder[motorB] = 0;
+	motor[motorB] = 30;
+	while(nMotorEncoder[motorB] < 1080)
+	{}
+	motor[motorB]=0;
+
 
 	displayString(3, "Press and release Enter to confirm board calibration");
 
@@ -119,7 +117,7 @@ bool pickUpPiece() // same return as moveXY Calum
 {
 	nMotorEncoder[motorB] = 0;
 	motor[motorB] = 30;
-	while(nMotorEncoder[motorB] < 1080)
+	while(nMotorEncoder[motorB] < 1100)
 	{
 		if(getButtonPress(buttonAny) == 1)
 			return false;
@@ -127,14 +125,15 @@ bool pickUpPiece() // same return as moveXY Calum
 	motor[motorB]=0;
 	nMotorEncoder[motorC] = 0;
 	wait1Msec(2000);
-	motor[motorC] = 20;
-	while(nMotorEncoder[motorC] < 110)
+	motor[motorC] = 10;
+	/*
+	while(nMotorEncoder[motorC] < 150)
 	{
 		if(getButtonPress(buttonAny) == 1)
 			return false;
 	}
-	motor[motorC] = 0;
-	wait1Msec(2000);
+	*/
+	wait1Msec(5000);
 	motor[motorB] = -40;
 	while(!(nMotorEncoder[motorB] == 0))
 	{
@@ -148,12 +147,12 @@ bool pickUpPiece() // same return as moveXY Calum
 void dropPiece()
 {
 	motor[motorB] = 50;
-	while(nMotorEncoder[motorB] < 1000 )
+	while(nMotorEncoder[motorB] < 1100 )
 	{}
 	motor[motorB]=0;
 	wait1Msec(2000);
-	motor[motorC] = -20;
-	while(nMotorEncoder[motorC] <80)
+	motor[motorC] = -10;
+	while(nMotorEncoder[motorC] > 0)
 	{}
 	motor[motorC] = 0;
 
@@ -168,9 +167,8 @@ int chessMoves(TFileHandle & fin)//reads in the files and generates move
 
 	readTextPC(fin, startColor);
 
-	while(readTextPC(fin, piece))
+	while(readTextPC(fin, piece) && readIntPC(fin, statPiece))
 	{
-		readIntPC(fin, statPiece);
 		displayString(9, "Status: %d", statPiece);
 		numMoves+=1;
 		readIntPC(fin, y);
@@ -201,6 +199,11 @@ int chessMoves(TFileHandle & fin)//reads in the files and generates move
 			moveXY(x2,y2);
 		}
 	}
+
+	if(piece!="")
+		displayString(14, "%s", piece);
+
+
 	return numMoves;
 }
 
@@ -212,23 +215,26 @@ task main()
 	int movesPlayed = 0;
 	configureAllSensors();
 
-	displayString(5,"Press Any Button To Start!");
+	//callibrateBoard();
+/*
+	displayString(5,"Press Any Button To Start!");		//initialize game
 	while(!getButtonPress(buttonAny))
 	{}
 	while(getButtonPress(buttonAny))
-	{
-		clearTimer(T1);
-	}
-
+	{}
+	clearTimer(T1);
+*/
 	TFileHandle fin;
 	bool fileCheck = openReadPC(fin , "chess.txt");
 
 	if(!fileCheck)
 	{
-		displayString(10, "Error");
+		displayString(5, "Error, file not found");
 	}
 	else
 	{
 		movesPlayed = chessMoves(fin);
+		int time = time1[T1] / 1000;
+		displayString(15, "Game finished in %d moves and %\n in %d seconds.", movesPlayed, time);
 	}
 }
