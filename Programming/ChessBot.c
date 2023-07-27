@@ -237,7 +237,7 @@ int chessMoves(TFileHandle & fin)//reads in the files and generates move
 		readIntPC(fin, y2);
 		readIntPC(fin , x2);
 
-		displayString(10, "Move %s from %d,%d to %d,%d", piece ,x,y,x2,y2);
+		displayString(6, "Move %s from %d,%d to %d,%d", piece ,x,y,x2,y2);
 		zeroAllMotors();
 
 		if(statPiece == 0)
@@ -289,7 +289,7 @@ task main()
 	clearTimer(T1);
 
 	TFileHandle fin;
-	bool fileCheck = openReadPC(fin , "Chess_Game_1.txt");
+	bool fileCheck = openReadPC(fin , "Chess_Game_2.txt");
 
 
 
@@ -301,7 +301,8 @@ task main()
 	{
 		movesPlayed = chessMoves(fin);
 		int time = time1[T1] / 1000;
-		displayString(10, "Game finished in %d moves and in %d seconds.", movesPlayed, time);
+		displayString(9, "Game finished in %d moves.", movesPlayed);
+		displayString(10,"Elapsed time: %d seconds", time);
 	}
 	while(!getButtonPress(buttonAny))
 	{}
