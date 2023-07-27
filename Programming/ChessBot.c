@@ -30,7 +30,7 @@ void zeroAllMotors()
 	motor[motorB] = -70;
 	motor[motorD] = -100;
 
-	while (!(SensorValue[Z_ZERO] == 1 && SensorValue[Y_ZERO] == 1 && SensorValue[X_ZERO] < zeroDist)) //change "2" to appropriate value.
+	while (!(SensorValue[Z_ZERO] == 1 && SensorValue[Y_ZERO] == 1 && SensorValue[X_ZERO] < zeroDist))
 	{
 		if(SensorValue[Z_ZERO] == 1)
 			motor[motorB] = 0;
@@ -68,13 +68,20 @@ bool moveXY(int x, int y) //a1 is (0,0), will take a bool value and return 1 nor
 	return true;
 }
 
-bool moveFromXY(int x, int y, int x2, int y2)
+bool moveFromXY(int y, int x, int y2, int x2)
 {
 	//D=x-axis A=y-axis
+
 	nMotorEncoder[motorD]= nMotorEncoder[motorA] = 0;
 
-	int distX = Y_COORD[y2] - Y_COORD[y];
-	int distY = X_COORD[x2] - X_COORD[x];
+	float distX = 0, distY = 0;
+	distX = X_COORD[x2] - X_COORD[x];
+	distY = Y_COORD[y2] - Y_COORD[y];
+
+	nMotorEncoder[motorA] = 0;
+	nMotorEncoder[motorD] = 0;
+
+	displayString(2,"Value of Y %d is X %d",distY, distX);
 
 	if(distX > 0)
 		motor[motorD] = 75;
@@ -86,17 +93,17 @@ bool moveFromXY(int x, int y, int x2, int y2)
 	else
 		motor[motorA] = -75;
 
-
-
-	while (fabs(nMotorEncoder[motorD]) < fabs(distX) || fabs(nMotorEncoder[motorA]) < fabs(distY))
-	{
-		if(nMotorEncoder[motorD] > fabs(distX))
-			motor[motorD] = 0;
-		if(nMotorEncoder[motorA] > fabs(distY))
-			motor[motorA] = 0;
-		if(getButtonPress(buttonAny) == 1)
-			return false;
-	}
+while ((distX > 0 && nMotorEncoder[motorD] < distX) || (distX < 0 && nMotorEncoder[motorD] > distX) ||
+       (distY > 0 && nMotorEncoder[motorA] < distY) || (distY < 0 && nMotorEncoder[motorA] > distY))
+{
+    if((distX > 0 && nMotorEncoder[motorD] >= distX) || (distX < 0 && nMotorEncoder[motorD] <= distX))
+        motor[motorD] = 0;
+    if((distY > 0 && nMotorEncoder[motorA] >= distY) || (distY < 0 && nMotorEncoder[motorA] <= distY))
+        motor[motorA] = 0;
+    if(getButtonPress(buttonAny) == 1)
+    		motor[motorA] = motor[motorD] = 0;
+        return false;
+}
 	motor[motorD] = motor[motorA] = 0;
 	return true;
 
@@ -145,7 +152,7 @@ bool pickUpPiece() // same return as moveXY Calum
 			return false;
 	}
 	*/
-	wait1Msec(5000);
+	wait1Msec(2000);
 	motor[motorB] = -40;
 	while(SensorValue[Z_ZERO] == 0)
 	{
@@ -178,9 +185,9 @@ bool removePiece(int &counter) //same return as moveXY
 	motor[motorA] = 100;
 	motor[motorD]= -30;
 
-	while (nMotorEncoder[motorA] < y || SensorValue[X_ZERO] < 5)
+	while (nMotorEncoder[motorA] < y || SensorValue[X_ZERO] > 6)
 	{
-		if(SensorValue[X_ZERO] > 5)
+		if(SensorValue[X_ZERO] < 6)
 			motor[motorD] = 0;
 		if(nMotorEncoder[motorA] > y)
 			motor[motorA] = 0;
@@ -236,9 +243,9 @@ int chessMoves(TFileHandle & fin)//reads in the files and generates move
 			moveXY(x,y);
 			pickUpPiece();
 
-			moveFromXY(x,y,x2,y2);
-			//zeroAllMotors();
-			//moveXY(x2,y2);
+			//moveFromXY(x,y,x2,y2);
+			zeroAllMotors();
+			moveXY(x2,y2);
 			dropPiece();
 		}
 		else
@@ -249,8 +256,9 @@ int chessMoves(TFileHandle & fin)//reads in the files and generates move
 			zeroAllMotors();
 			moveXY(x,y);
 			pickUpPiece();
-			//zeroAllMotors();
-			moveFromXY(x,y,x2,y2);
+			zeroAllMotors();
+			//moveFromXY(x,y,x2,y2);
+			moveXY(x2,y2);
 			dropPiece();
 		}
 	}
@@ -270,7 +278,7 @@ task main()
 	configureAllSensors();
 
 	//callibrateBoard();
-	//zeroAllMotors();
+	zeroAllMotors();
 
 	displayString(5,"Press Any Button To Start!");		//initialize game
 	while(!getButtonPress(buttonAny))
@@ -280,9 +288,7 @@ task main()
 	clearTimer(T1);
 
 	TFileHandle fin;
-	bool fileCheck = openReadPC(fin , "Chess_Game_1.txt");
-
-	/*
+	bool fileCheck = openReadPC(fin , "Chess_Game.txt");
 
 	if(!fileCheck)
 	{
@@ -292,11 +298,6 @@ task main()
 	{
 		movesPlayed = chessMoves(fin);
 		int time = time1[T1] / 1000;
-		displayString(15, "Game finished in %d moves and %\n in %d seconds.", movesPlayed, time);
-	}*/
-	zeroAllMotors();
-	moveXY(0,0);
-	pickUpPiece();
-	moveFromXY(0,0,1,2);
-	dropPiece();
+		displayString(14, "Game finished in %d moves %/n and  in %d seconds.", movesPlayed, time);
+	}
 }
