@@ -145,7 +145,14 @@ bool pickUpPiece() // same return as moveXY Calum
 	nMotorEncoder[motorC] = 0;
 	wait1Msec(2000);
 	motor[motorC] = 10;
-	wait1Msec(2500);
+	/*
+	while(nMotorEncoder[motorC] < 150)
+	{
+		if(getButtonPress(buttonAny) == 1)
+			return false;
+	}
+	*/
+	wait1Msec(2000);
 	motor[motorB] = -40;
 	while(SensorValue[Z_ZERO] == 0)
 	{
@@ -235,7 +242,6 @@ int chessMoves(TFileHandle & fin)//reads in the files and generates move
 
 		if(statPiece == 0)
 		{
-			//movePiece = moveXY(x,y)&& pickUpPiece()&&zeroAllMotors()&&moveXY(x2,y2) && dropPiece();
 			movePiece = moveXY(x,y)&& pickUpPiece()&& moveFromXY(x2,y2) && dropPiece();
 			if(!movePiece)
 			{
@@ -245,9 +251,6 @@ int chessMoves(TFileHandle & fin)//reads in the files and generates move
 		}
 		else
 		{
-			/*movePiece = moveXY(x2,y2) && pickUpPiece() && removePiece(counter) && zeroAllMotors()
-									&& moveXY(x,y) && pickUpPiece()&& zeroAllMotors() && moveXY(x2,y2)
-									&& dropPiece();*/
 			movePiece = moveXY(x2,y2) && pickUpPiece() && removePiece(counter) && zeroAllMotors()
 									&& moveXY(x,y) && pickUpPiece()&& moveFromXY(x2,y2)
 									&& dropPiece();
@@ -300,10 +303,8 @@ task main()
 		int time = time1[T1] / 1000;
 		displayString(10, "Game finished in %d moves and in %d seconds.", movesPlayed, time);
 	}
-	/*
-	zeroAllMotors();
-	moveXY(0,0);
-	pickUpPiece();
-	moveFromXY(0,0,1,2);
-	dropPiece();*/
+	while(!getButtonPress(buttonAny))
+	{}
+	while(getButtonPress(buttonAny))
+	{}
 }
