@@ -301,9 +301,10 @@ task main()
 	{
 		movesPlayed = chessMoves(fin);
 		int time = time1[T1] / 1000;
-		displayString(9, "Game finished in %d moves.", movesPlayed);
-		displayString(10,"Elapsed time: %d seconds", time);
 	}
+	displayString(9, "Game finished in %d moves.", movesPlayed);
+	displayString(10,"Elapsed time: %d seconds", time);
+
 	while(!getButtonPress(buttonAny))
 	{}
 	while(getButtonPress(buttonAny))
