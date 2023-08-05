@@ -21,9 +21,9 @@ const tSensors Z_ZERO = S3;
 
 void configureAllSensors() //initializes sensors.
 {
-	SensorType[Z_ZERO] = sensorEV3_Touch; 
-	SensorType[Y_ZERO] = sensorEV3_Touch; 
-	SensorType[X_ZERO] = sensorEV3_Ultrasonic; 
+	SensorType[Z_ZERO] = sensorEV3_Touch;
+	SensorType[Y_ZERO] = sensorEV3_Touch;
+	SensorType[X_ZERO] = sensorEV3_Ultrasonic;
 	wait1Msec(100);
 }
 
@@ -108,7 +108,7 @@ bool moveFromXY(int x, int y) //moves chess piece from inital position to final 
 
 }
 
-void callibrateBoard().//moves gantry to h1(7,7) location; move chess board to align
+void callibrateBoard()//moves gantry to h1(7,7) location; move chess board to align
 {
 	zeroAllMotors();
 	nMotorEncoder[motorD] = nMotorEncoder[motorA] = 0;
@@ -127,11 +127,12 @@ void callibrateBoard().//moves gantry to h1(7,7) location; move chess board to a
 	{}
 	while(getButtonPress(buttonEnter))
 	{}
-	
+
 	zeroAllMotors();
 }
 
 bool pickUpPiece() // picks up chess piece; will take a bool value and return 1 normally, if 0 is returned end the game
+{
 	nMotorEncoder[motorB] = 0;
 	motor[motorB] = 30;
 	while(nMotorEncoder[motorB] < 1100)
@@ -157,32 +158,32 @@ bool pickUpPiece() // picks up chess piece; will take a bool value and return 1 
 bool dropPiece() // drops chess piece; will take a bool value and return 1 normally, if 0 is returned end the game
 {
 	motor[motorB] = 50;
-	
+
 	while(nMotorEncoder[motorB] < 1100 )
 	{
 		if(getButtonPress(buttonAny) == 1)
 			return false;
 	}
-	
+
 	motor[motorB]=0;
 	wait1Msec(2000);
 	motor[motorC] = -10;
-	
+
 	while(nMotorEncoder[motorC] > 0)
 	{
 		if(getButtonPress(buttonAny) == 1)
 			return false;
 	}
-	
+
 	motor[motorC] = 0;
 
 	return true;
 }
 
-bool removePiece(int &counter) //if piece is being eaten it will move to edge of board; 
+bool removePiece(int &counter) //if piece is being eaten it will move to edge of board;
 //will take a bool value and return 1 normally, if 0 is returned end the game
 {
-	int die =400+ counter*(1000); //calculates nMotorEncoder values for chess piece to be dropped 
+	int die =400+ counter*(1000); //calculates nMotorEncoder values for chess piece to be dropped
 								 //based on number of times eaten
 	zeroAllMotors();
 	nMotorEncoder[motorD] = 0;
@@ -198,11 +199,11 @@ bool removePiece(int &counter) //if piece is being eaten it will move to edge of
 		if(getButtonPress(buttonAny) == 1)
 			return false;
 	}
-	
+
 	motor[motorA] = 0;
 	dropPiece();
 	motor[motorB] = -40;
-	
+
 	while(SensorValue[Z_ZERO] == 0)
 	{
 		if(getButtonPress(buttonAny) == 1)
@@ -218,7 +219,7 @@ int chessMoves(TFileHandle & fin)//reads in the files and generates move, return
 	int numMoves = 0, statPiece = 10, x = 0, y = 0, x2 = 0, y2 = 0, counter = 0;
 	string startColor, piece;
 	bool movePiece = true;
-	
+
 	readTextPC(fin, startColor);
 
 	while(readTextPC(fin, piece) && readIntPC(fin, statPiece))
@@ -291,7 +292,11 @@ task main()
 	else
 	{
 		movesPlayed = chessMoves(fin);
-		int time = time1[T1] / 1000;
+	}
+	int time = time1[T1] / 1000;
+	for(int i=0;i<3;i++)
+	{
+		displayString(i,"hello");
 	}
 	displayString(9, "Game finished in %d moves.", movesPlayed);
 	displayString(10,"Elapsed time: %d seconds", time);
